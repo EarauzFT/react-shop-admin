@@ -1,20 +1,28 @@
+import { useState } from 'react'
 import endPoints from '@services/api';
 import useFetch from '@hooks/useFetch';
 import { Chart } from '@common/Chart';
-import { useAuth } from '@hooks/useAuth';
+import SessionValidate from '@components/SessionValidate';
 
 const PRODUCT_LIMIT = 15;
 const PRODUCT_OFFSET = 15;
 
 export default function Dashboard() {
-    const auth = useAuth();
-    auth.validateSession();
+
+    const [validSession, SetValidSession] = useState(true);
+
     const products = useFetch(endPoints.products.getProducts(PRODUCT_LIMIT, PRODUCT_OFFSET));
 
     const categoryName = products?.map((product) => product.category);
     const categoryCount = products?.map((product) => product.category.name);
 
     const countOccurrences = (arr) => arr.reduce((prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
+
+    if (validSession) {
+        SessionValidate()
+        console.log('S', SessionValidate())
+        SetValidSession(false);
+    }
 
     const data = {
         datasets: [{

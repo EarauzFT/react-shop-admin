@@ -50,17 +50,21 @@ function useProviderAuth() {
 
     const validateSession = async () => {
         const token = Cookie.get('token');
-
+        if (!token) {
+            console.log('No active session')
+            return false;
+        }
         const decodified = jwt.decode(token, jwtKey);
         console.log('key', jwtKey)
         const newToken = jwt.sign({ decodified }, 'VU68i17xT4bYjNdyoMwuSk2sZWCHgJO5', { expiresIn: '15min' });
 
         try {
             var decoded = jwt.verify(newToken, 'VU68i17xT4bYjNdyoMwuSk2sZWCHgJO5');
-            console.log('result: ', decoded)
+            console.log('Valid Session', decoded)
+            return true;
         } catch (err) {
             console.log('error', err)
-            // err
+            return false;
         }
     }
 
